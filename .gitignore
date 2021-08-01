@@ -1,0 +1,8 @@
+# editors
+*.kate-swp
+*.swp
+*~
+*.user
+*.autosave
+*.kra
+.idea/
