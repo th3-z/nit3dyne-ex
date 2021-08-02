@@ -13,6 +13,12 @@ add_executable(
 target_link_libraries(skinning PRIVATE nit3dyne)
 
 add_executable(
+        billboard
+        src/billboard.cpp
+)
+target_link_libraries(billboard PRIVATE nit3dyne)
+
+add_executable(
     lines_transforms
     src/lines_transforms.cpp
 )
