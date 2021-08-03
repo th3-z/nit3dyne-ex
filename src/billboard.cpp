@@ -18,12 +18,6 @@ int main() {
     postShader.setUniform("tex", 0);
     postShader.setUniform("texDither", 1);
 
-    n3d::DirectionalLight sun = n3d::DirectionalLight();
-    sun.diffuse = glm::vec3(0.4, 0.4, 0.4);
-    sun.ambient = glm::vec3(0.6, 0.6, 0.6);
-    shader.use();
-    shader.setDirectionalLight(sun);
-
     n3d::CameraFree camera(85.f, n3d::Display::viewPort);
 
     n3d::ResourceCache<n3d::Texture> textureCache;
@@ -40,12 +34,16 @@ int main() {
         glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        glm::mat4 view = camera.getView();
+
         // Render scene
         shader.use();
-        shader.setUniform("view", camera.getView());
-        shader.setUniform("perspective", camera.projection);
+        shader.setUniform("vp", camera.projection * view);
+        shader.setUniform("camera_right", glm::vec3(view[0][0], view[1][0], view[2][0]));
+        shader.setUniform("camera_up", glm::vec3(view[0][1], view[1][1], view[2][1]));
         shader.setUniform("position", billboard.position);
         shader.setUniform("size", billboard.size);
+        shader.setUniform("viewScale", billboard.viewScale);
         billboard.draw(shader);
 
         n3d::Display::flip(postShader);
