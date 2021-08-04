@@ -13,6 +13,12 @@ add_executable(
 target_link_libraries(skinning PRIVATE nit3dyne)
 
 add_executable(
+        colored
+        src/colored.cpp
+)
+target_link_libraries(colored PRIVATE nit3dyne)
+
+add_executable(
         billboard
         src/billboard.cpp
 )

@@ -31,7 +31,7 @@ int main() {
     n3d::CameraOrbit camera(85.f, n3d::Display::viewPort);
 
     n3d::ResourceCache<n3d::Texture> textureCache;
-    n3d::ResourceCache<n3d::Mesh> meshCache;
+    n3d::ResourceCache<n3d::MeshStatic> meshCache;
 
     std::vector<n3d::Model> models;
 

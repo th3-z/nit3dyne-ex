@@ -2,7 +2,8 @@
 #include <nit3dyne/graphics/shader.h>
 #include <nit3dyne/camera/cameraOrbit.h>
 #include <nit3dyne/resourceCache.h>
-#include <nit3dyne/graphics/mesh_static.h>
+#include <nit3dyne/graphics/mesh.h>
+#include <nit3dyne/graphics/mesh_colored.h>
 #include <nit3dyne/graphics/model.h>
 
 
@@ -10,16 +11,12 @@ int main() {
     n3d::Display::init();
     n3d::Input::init(n3d::Display::window);
 
-    n3d::Shader shader("shaders/vertex.vert", "shaders/fragment.frag");
-    shader.use();
-    shader.setUniform("tex", 0);
+    n3d::Shader shader("shaders/vertex-colored.vert", "shaders/fragment-colored.frag");
 
     n3d::Shader postShader("shaders/post.vert", "shaders/post.frag");
     postShader.use();
     postShader.setUniform("tex", 0);
     postShader.setUniform("texDither", 1);
-
-    n3d::Shader shaderNormals("shaders/normals.vert", "shaders/normals.frag", "shaders/normals.geom");
 
     n3d::DirectionalLight sun = n3d::DirectionalLight();
     sun.diffuse = glm::vec3(0.8, 0.8, 0.8);
@@ -29,11 +26,9 @@ int main() {
 
     n3d::CameraOrbit camera(85.f, n3d::Display::viewPort);
 
-    n3d::ResourceCache<n3d::Texture> textureCache;
-    n3d::ResourceCache<n3d::MeshStatic> meshCache;
+    n3d::ResourceCache<n3d::MeshColored> meshCache;
 
-    n3d::Model model(meshCache.loadResource("sphere"), textureCache.loadResource("error"));
-    std::cout << "loaded" << std::endl;
+    n3d::Model model(meshCache.loadResource("nit3dyne"), nullptr);
 
     while (!n3d::Display::shouldClose) {
         n3d::Display::update();
@@ -51,14 +46,6 @@ int main() {
         shader.setUniform("dLight.direction", camera.getView() * sun.direction);
 
         model.draw(shader, camera.projection, camera.getView());
-
-        if (n3d::Input::getKey(GLFW_KEY_TAB)) {
-            shaderNormals.use();
-            shaderNormals.setUniform("model", model.modelMat);
-            shaderNormals.setUniform("view", camera.getView());
-            shaderNormals.setUniform("projection", camera.projection);
-            model.draw(shaderNormals, camera.projection, camera.getView());
-        }
 
         n3d::Display::flip(postShader);
         n3d::Input::update();
