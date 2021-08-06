@@ -2,9 +2,9 @@
 #include <nit3dyne/graphics/shader.h>
 #include <nit3dyne/camera/cameraOrbit.h>
 #include <nit3dyne/core/resourceCache.h>
-#include <nit3dyne/graphics/mesh.h>
 #include <nit3dyne/graphics/mesh_colored.h>
 #include <nit3dyne/graphics/model.h>
+#include <nit3dyne/core/math.h>
 
 
 int main() {
@@ -19,8 +19,8 @@ int main() {
     postShader.setUniform("texDither", 1);
 
     n3d::DirectionalLight sun = n3d::DirectionalLight();
-    sun.diffuse = glm::vec3(0.8, 0.8, 0.8);
-    sun.ambient = glm::vec3(0.1, 0.1, 0.1);
+    sun.diffuse = n3d::vec3(0.8, 0.8, 0.8);
+    sun.ambient = n3d::vec3(0.1, 0.1, 0.1);
     shader.use();
     shader.setDirectionalLight(sun);
 
@@ -45,6 +45,7 @@ int main() {
         shader.use();
         shader.setUniform("dLight.direction", camera.getView() * sun.direction);
 
+        model.rotate((360.f * 1.) * (n3d::Display::timeDelta / 10.), 1.f, 1.f, 0.f, false);
         model.draw(shader, camera.projection, camera.getView());
 
         n3d::Display::flip(postShader);

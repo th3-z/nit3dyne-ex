@@ -3,6 +3,7 @@
 #include <nit3dyne/camera/cameraFree.h>
 #include <nit3dyne/core/resourceCache.h>
 #include <nit3dyne/graphics/billboard.h>
+#include <nit3dyne/core/math.h>
 
 
 int main() {
@@ -34,13 +35,13 @@ int main() {
         glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glm::mat4 view = camera.getView();
+        n3d::mat4 view = camera.getView();
 
         // Render scene
         shader.use();
         shader.setUniform("vp", camera.projection * view);
-        shader.setUniform("camera_right", glm::vec3(view[0][0], view[1][0], view[2][0]));
-        shader.setUniform("camera_up", glm::vec3(view[0][1], view[1][1], view[2][1]));
+        shader.setUniform("camera_right", n3d::vec3(view[0][0], view[1][0], view[2][0]));
+        shader.setUniform("camera_up", n3d::vec3(view[0][1], view[1][1], view[2][1]));
         shader.setUniform("position", billboard.position);
         shader.setUniform("size", billboard.size);
         shader.setUniform("viewScale", billboard.viewScale);

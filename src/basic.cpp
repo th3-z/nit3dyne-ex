@@ -2,6 +2,7 @@
 #include <nit3dyne/graphics/shader.h>
 #include <nit3dyne/camera/cameraOrbit.h>
 #include <nit3dyne/core/resourceCache.h>
+#include <nit3dyne/core/math.h>
 #include <nit3dyne/graphics/mesh_static.h>
 #include <nit3dyne/graphics/model.h>
 
@@ -22,8 +23,8 @@ int main() {
     n3d::Shader shaderNormals("shaders/normals.vert", "shaders/normals.frag", "shaders/normals.geom");
 
     n3d::DirectionalLight sun = n3d::DirectionalLight();
-    sun.diffuse = glm::vec3(0.8, 0.8, 0.8);
-    sun.ambient = glm::vec3(0.1, 0.1, 0.1);
+    sun.diffuse = n3d::vec3(0.8, 0.8, 0.8);
+    sun.ambient = n3d::vec3(0.1, 0.1, 0.1);
     shader.use();
     shader.setDirectionalLight(sun);
 

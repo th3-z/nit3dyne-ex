@@ -3,7 +3,6 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
 #include <soloud/include/soloud.h>
 #include <soloud/include/soloud_wav.h>
 #include <entt/entt.hpp>
@@ -11,7 +10,6 @@
 #include <array>
 
 #include <nit3dyne/camera/cameraFps.h>
-#include <nit3dyne/graphics/mesh.h>
 #include <nit3dyne/graphics/mesh_static.h>
 #include <nit3dyne/graphics/shader.h>
 #include <nit3dyne/graphics/texture.h>
@@ -19,6 +17,7 @@
 #include <nit3dyne/core/input.h>
 #include <nit3dyne/graphics/skybox.h>
 #include <nit3dyne/core/resourceCache.h>
+#include <nit3dyne/core/math.h>
 
 #include <nit3dyne/core/font.h>
 #include <nit3dyne/graphics/model.h>
@@ -177,10 +176,10 @@ int main() {
         }
 
         // FIXME: Lighting calculations still need the real camera view mat
-        viewModel.draw(shaderUnlit, glm::mat4(1.f), camera.projection);
+        viewModel.draw(shaderUnlit, n3d::mat4(1.f), camera.projection);
 
         // Update audio
-        glm::vec4 sourcePosView =  (camera.getView() * glm::mat4(1.f)) * glm::vec4(0.f,0.f,0.f,1.f);
+        n3d::vec4 sourcePosView =  (camera.getView() * n3d::mat4(1.f)) * n3d::vec4(0.f,0.f,0.f,1.f);
         float w = sourcePosView.w;
         soloud.set3dSourceParameters(sampleHandle, sourcePosView.x/w, sourcePosView.y/w, sourcePosView.z/w, 0.f, 0.f, 0.f);
 
@@ -189,7 +188,7 @@ int main() {
 
         // Render skybox
         skybox.draw(shaderSkybox,
-                    glm::mat4(glm::mat3(camera.getView())),
+                    n3d::mat4(n3d::mat3(camera.getView())),
                     camera.projection);
 
         axis.draw(shaderLine, camera.projection, camera.getView());

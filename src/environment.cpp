@@ -5,6 +5,7 @@
 #include <nit3dyne/graphics/texture.h>
 #include <nit3dyne/graphics/skybox.h>
 #include <nit3dyne/graphics/terrain.h>
+#include <nit3dyne/core/math.h>
 
 
 int main() {
@@ -25,8 +26,8 @@ int main() {
     postShader.setUniform("texDither", 1);
 
     n3d::DirectionalLight sun = n3d::DirectionalLight();
-    sun.diffuse = glm::vec3(0.8, 0.8, 0.8);
-    sun.ambient = glm::vec3(0.1, 0.1, 0.1);
+    sun.diffuse = n3d::vec3(0.8, 0.8, 0.8);
+    sun.ambient = n3d::vec3(0.1, 0.1, 0.1);
     shaderTerrain.use();
     shaderTerrain.setDirectionalLight(sun);
 
@@ -54,7 +55,7 @@ int main() {
 
         skybox.draw(
             shaderSky,
-            glm::mat4(glm::mat3(camera.getView())),
+            n3d::mat4(n3d::mat3(camera.getView())),
             camera.projection
         );
         glActiveTexture(GL_TEXTURE0);
