@@ -10,123 +10,123 @@
 #include <memory>
 #include <array>
 
-#include "camera/cameraFps.h"
-#include "graphics/mesh.h"
-#include "graphics/shader.h"
-#include "graphics/texture.h"
-#include "graphics/terrain.h"
-#include "input.h"
-#include "graphics/skybox.h"
-#include "resourceCache.h"
+#include <nit3dyne/camera/cameraFps.h>
+#include <nit3dyne/graphics/mesh.h>
+#include <nit3dyne/graphics/mesh_static.h>
+#include <nit3dyne/graphics/shader.h>
+#include <nit3dyne/graphics/texture.h>
+#include <nit3dyne/graphics/terrain.h>
+#include <nit3dyne/core/input.h>
+#include <nit3dyne/graphics/skybox.h>
+#include <nit3dyne/core/resourceCache.h>
 
-#define TINYGLTF_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "font.h"
-#include "graphics/model.h"
-#include "tiny_gltf.h"
-#include "graphics/lines.h"
+#include <nit3dyne/core/font.h>
+#include <nit3dyne/graphics/model.h>
+#include <nit3dyne/graphics/lines.h>
 
 
 int main() {
-    Display::init();
-    Input::init(Display::window);
+    n3d::Display::init();
+    n3d::Input::init(n3d::Display::window);
 
     // TODO: Move into screen.cpp
-    Shader postShader("shaders/post.vert", "shaders/post.frag");
+    n3d::Shader postShader("shaders/post.vert", "shaders/post.frag");
     postShader.use();
     postShader.setUniform("tex", 0);
     postShader.setUniform("texDither", 1);
-    Texture textureDither("dith");
+    n3d::Texture textureDither("dith");
 
     // Skybox shader
-    Shader shaderSkybox("shaders/skybox.vert", "shaders/skybox.frag");
+    n3d::Shader shaderSkybox("shaders/skybox.vert", "shaders/skybox.frag");
     shaderSkybox.use();
     shaderSkybox.setUniform("skybox", 0);
 
     // Test font renderer
-    Font font("This text should not be upside down anymore!");
+    n3d::Font font("This text should not be upside down anymore!");
 
     // Main shader program
-    Shader shaderAnim("shaders/vertex-skinned.vert", "shaders/fragment.frag");
+    n3d::Shader shaderAnim("shaders/vertex-skinned.vert", "shaders/fragment.frag");
     shaderAnim.use();
     shaderAnim.setUniform("tex", 0);
 
-    Shader shaderUnlit("shaders/vertex.vert", "shaders/fragment-unlit.frag");
+    n3d::Shader shaderUnlit("shaders/vertex.vert", "shaders/fragment-unlit.frag");
     shaderAnim.use();
     shaderAnim.setUniform("tex", 0);
 
-    Shader shaderTerrain("shaders/terrain.vert", "shaders/terrain.frag");
+    n3d::Shader shaderTerrain("shaders/terrain.vert", "shaders/terrain.frag");
     shaderTerrain.use();
     shaderTerrain.setUniform("tex", 0);
 
-    Shader shaderNormals("shaders/normals.vert", "shaders/normals.frag", "shaders/normals.geo");
+    n3d::Shader shaderNormals("shaders/normals.vert", "shaders/normals.frag", "shaders/normals.geo");
 
-    Shader shaderStatic("shaders/vertex.vert", "shaders/fragment.frag");
+    n3d::Shader shaderStatic("shaders/vertex.vert", "shaders/fragment.frag");
     shaderStatic.use();
     shaderStatic.setUniform("tex", 0);
 
-    Shader shaderLine("shaders/line.vert", "shaders/line.frag");
+    n3d::Shader shaderLine("shaders/line.vert", "shaders/line.frag");
 
-    CameraFree camera(85.f, Display::viewPort);
+    n3d::CameraFps camera(85.f, n3d::Display::viewPort);
 
     // Scene
-    DirectionalLight dLight = DirectionalLight();
+    n3d::DirectionalLight dLight = n3d::DirectionalLight();
     shaderStatic.use();
     shaderStatic.setDirectionalLight(dLight);
     shaderAnim.use();
     shaderAnim.setDirectionalLight(dLight);
+    shaderTerrain.use();
+    shaderTerrain.setDirectionalLight(dLight);
 
-    ResourceCache<Texture> textureCache;
-    ResourceCache<MeshAnimated> meshAnimCache;
-    ResourceCache<Mesh> meshCache;
+    n3d::ResourceCache<n3d::Texture> textureCache;
+    n3d::ResourceCache<n3d::MeshAnimated> meshAnimCache;
+    n3d::ResourceCache<n3d::MeshStatic> meshCache;
 
-    SpotLight sLight = SpotLight();
+    n3d::SpotLight sLight = n3d::SpotLight();
     shaderStatic.use();
     shaderStatic.setSpotLight(sLight);
     shaderAnim.use();
     shaderAnim.setSpotLight(sLight);
 
-    Skybox skybox("test");
-    Terrain test = Terrain("ny40");
+    n3d::Skybox skybox("test");
+    n3d::Terrain test = n3d::Terrain("ny40");
+    std::shared_ptr<n3d::Texture> terrainTexture = textureCache.loadResource("ny40");
 
-    std::vector<Line> axisData;
-    axisData.push_back(Line{
+    std::vector<n3d::Line> axisData;
+    axisData.push_back(n3d::Line{
             {0.f, 0.f, 0.f}, {1.f, 0.f, 0.f},
             {500.f, 0.f, 0.f}, {0.f, 0.f, 0.f}
     });
-    axisData.push_back(Line{
+    axisData.push_back(n3d::Line{
             {0.f, 0.f, 0.f}, {0.f, 1.f, 0.f},
             {0.f, 500.f, 0.f}, {0.f, 0.f, 0.f}
     });
-    axisData.push_back(Line{
+    axisData.push_back(n3d::Line{
             {0.f, 0.f, 0.f}, {0.f, 0.f, 1.f},
             {0.f, 0.f, 500.f}, {0.f, 0.f, 0.f}
     });
-    Lines axis(axisData);
+    n3d::Lines axis(axisData);
 
     std::array<std::string, 8> propNames = {
         "desk", "chair", "axe", "speaker", "switch", "stg44", "m4a1", "cube"};
-    std::vector<std::unique_ptr<Model>> props;
+    std::vector<std::unique_ptr<n3d::Model>> props;
 
     for (size_t i = 0; i < propNames.size(); ++i) {
-        props.emplace_back(std::make_unique<Model>(
-            Model(meshCache.loadResource(propNames[i]), textureCache.loadResource(propNames[i]))));
+        props.emplace_back(std::make_unique<n3d::Model>(
+                n3d::Model(meshCache.loadResource(propNames[i]), textureCache.loadResource(propNames[i]))));
         props[i]->translate(i * 5.f, 2.f, -2.f);
     }
 
-    Model plane(meshCache.loadResource("plane"), textureCache.loadResource("red"));
-    plane.setMaterial(Materials::metallic);
+    n3d::Model plane(meshCache.loadResource("plane"), textureCache.loadResource("red"));
+    plane.setMaterial(n3d::Materials::metallic);
     plane.scale(7.f, 0.f, 7.f);
 
-    Model sphere(meshCache.loadResource("sphere"), textureCache.loadResource("red"));
+    n3d::Model sphere(meshCache.loadResource("sphere"), textureCache.loadResource("red"));
     sphere.translate(0.f, 5.f, 0.f);
     sphere.scale(1.f, 1.f, 1.f);
 
-    Model stg(meshAnimCache.loadResource("stg44"), textureCache.loadResource("stg44"));
+    n3d::Model stg(meshAnimCache.loadResource("stg44"), textureCache.loadResource("stg44"));
     stg.translate(2.f, 2.f, 0.f);
 
-    Model viewModel(meshCache.loadResource("m4a1"), textureCache.loadResource("m4a1"));
+    n3d::Model viewModel(meshCache.loadResource("m4a1"), textureCache.loadResource("m4a1"));
     viewModel.translate(0.45f, -0.25f, -0.65f);
     viewModel.rotate(95.f, 0.f, 1.f, 0.f);
     viewModel.rotate(-5.f, 0.f, 0.f, 1.f);
@@ -149,11 +149,11 @@ int main() {
     SoLoud::handle sampleHandle = soloud.play3d(sample, 0.f, 0.f, 0.f);
     soloud.set3dSourceParameters(sampleHandle, 0.f, 0.f, 0.f, 0.0f, 0.f, 0.f);
 
-    while (!Display::shouldClose) {
-        Display::update();
+    while (!n3d::Display::shouldClose) {
+        n3d::Display::update();
 
-        if (Input::getKey(GLFW_KEY_ESCAPE))
-            glfwSetWindowShouldClose(Display::window, true);
+        if (n3d::Input::getKey(GLFW_KEY_ESCAPE))
+            glfwSetWindowShouldClose(n3d::Display::window, true);
 
         camera.update();
 
@@ -165,12 +165,14 @@ int main() {
         shaderStatic.use();
         shaderStatic.setUniform("dLight.direction", camera.getView() * dLight.direction);
 
-        test.draw(shaderStatic, camera.projection, camera.getView());
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, terrainTexture->handle);
+        test.draw(shaderTerrain, camera.projection, camera.getView());
         plane.draw(shaderStatic, camera.projection, camera.getView());
         sphere.draw(shaderStatic, camera.projection, camera.getView());
 
         for (auto &prop : props) {
-            prop->rotate((360.f * 1.) * (Display::timeDelta / 10.), 0.f, 1.f, 0.f, false);
+            prop->rotate((360.f * 1.) * (n3d::Display::timeDelta / 10.), 0.f, 1.f, 0.f, false);
             prop->draw(shaderStatic, camera.projection, camera.getView());
         }
 
@@ -198,11 +200,11 @@ int main() {
         // Animated mesh
         stg.draw(shaderAnim, camera.projection, camera.getView());
 
-        Display::flip(postShader, textureDither.handle);
-        Input::update();
+        n3d::Display::flip(postShader);
+        n3d::Input::update();
     }
 
-    Display::destroy();
+    n3d::Display::destroy();
 
     return 0;
 }

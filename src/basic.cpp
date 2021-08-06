@@ -1,7 +1,7 @@
-#include <nit3dyne/display.h>
+#include <nit3dyne/core/display.h>
 #include <nit3dyne/graphics/shader.h>
 #include <nit3dyne/camera/cameraOrbit.h>
-#include <nit3dyne/resourceCache.h>
+#include <nit3dyne/core/resourceCache.h>
 #include <nit3dyne/graphics/mesh_static.h>
 #include <nit3dyne/graphics/model.h>
 

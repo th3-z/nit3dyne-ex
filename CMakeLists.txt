@@ -36,6 +36,11 @@ add_executable(
 )
 target_link_libraries(environment PRIVATE nit3dyne)
 
+add_executable(
+        fps_scene
+        src/fps_scene.cpp
+)
+target_link_libraries(fps_scene PRIVATE nit3dyne)
 
 add_custom_target(nit3dyne-ex ALL)
 # Copy application resources and shaders
